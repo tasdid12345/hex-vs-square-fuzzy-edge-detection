@@ -20,6 +20,33 @@ Writes `results.json` and `figures/f1_comparison.png`. Seed 42, CPU only, runs i
 
 Synthetic data only; results may not transfer to natural images.
 
+## Results (latest run)
+
+On a synthetic noisy-scene test set of 200 images, a standard square-grid median-plus-Sobel edge detector reached tolerant edge F1 of 0.942, versus 0.953 for my hexagonal-grid fuzzy pipeline, a small gain that trades precision (0.9995 to 0.975) for recall (0.895 to 0.934).
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.9416 |
+| improved_score | 0.9529 |
+| improvement | 0.01124 |
+| baseline_precision | 0.9995 |
+| improved_precision | 0.9749 |
+| baseline_recall | 0.8954 |
+| improved_recall | 0.9344 |
+| baseline_psnr_db | 31.99 |
+| improved_psnr_db | 31.82 |
+| baseline_ms_per_image | 2.686 |
+| improved_ms_per_image | 8.108 |
+| baseline_cv_f1 | 0.9463 |
+| improved_cv_f1 | 0.9577 |
+| baseline_threshold | 0.2 |
+| improved_smoothing | 0.2 |
+| improved_edge_threshold | 0.05 |
+
+Run on 2026-10-20. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Methods are deterministic given the fixed-seed data, so no repeated-seed std is reported. Synthetic data only; results may not transfer to natural images. The paper's own reported result is not stated. Runtime is measured in Python/NumPy and is indicative only. The improved model was revised after the first run did not beat the baseline; the test set was not used for this change, only the training-set CV grid was revised.
+
 ## Reference
 
 This project is motivated by the following paper:
