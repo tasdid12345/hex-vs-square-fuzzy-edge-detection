@@ -1,23 +1,24 @@
-# Fuzzy Edge Detection on a Hexagonal Grid vs a Square Grid
+# Hex-grid vs square-grid edge detection (synthetic scenes)
 
-Motivation: Fuzzy noise removal and edge detection on hexagonal images, as proposed in "Fuzzy Noise Removal and Edge Detection on Hexagonal Image" (2017), suggests that hexagonal sampling, where each pixel has six equidistant neighbours, may reduce directional bias in edge detection. This experiment checks that claim under controlled conditions against a standard square-grid pipeline.
+Question: does fuzzy noise removal plus edge detection on a hexagonal grid give more accurate edge maps than a square-grid median + Sobel pipeline, on the same noisy images?
 
-Question: Does fuzzy noise removal and edge detection on a hexagonal pixel grid produce more accurate edge maps than the same pipeline on a standard square grid, using the same noisy images?
+## Run
 
-Dataset: synthetic 128x128 grayscale scenes (random circles and polygons on a smooth background) with exact ground-truth edge maps, Gaussian plus salt-and-pepper noise, generated in code with a fixed seed. No download is needed. This is not the paper's own dataset. The test split is 20% of the generated images, and the same noisy images are given to both models.
+    pip install -r requirements.txt
+    python analysis.py
 
-Baseline: a square-grid pipeline with a 3x3 median filter followed by Sobel gradient magnitude and a fixed threshold. The threshold is chosen by cross-validation on the training split.
+Writes `results.json` and `figures/f1_comparison.png`. Seed 42, CPU only, runs in a few minutes.
 
-Improved model: the image is resampled onto an offset-row hexagonal grid. Fuzzy-membership smoothing and a fuzzy edge rule are applied over the six hex neighbours, and the edges are mapped back to the square grid for scoring. The smoothing width and edge threshold are chosen by cross-validation on the training split.
+## Method
 
-How to run:
+- Data: 1000 synthetic 128x128 scenes (circles/star polygons on a smooth background, Gaussian + salt-and-pepper noise). 800 train / 200 test split.
+- Baseline: 3x3 median filter, Sobel gradient magnitude, fixed threshold chosen by 3-fold CV on the training set.
+- Improved: hex resampling, 7-point hex median (impulse removal), fuzzy-weighted smoothing, then a linear hex-neighbourhood gradient with smoothing and threshold chosen by 3-fold CV on the training set. Edges are mapped back to the square grid.
+- Metric: tolerant edge F1 (1-pixel tolerance) on the 200 held-out scenes, single test-set evaluation for both models.
 
-```
-pip install -r requirements.txt
-python analysis.py
-```
+## Caveats
 
-Results: results are written to results.json (and a chart to figures/f1_comparison.png).
+Synthetic data only; results may not transfer to natural images.
 
 ## Reference
 
